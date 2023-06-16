@@ -1,0 +1,38 @@
+func caesarEncrypt(plainText: String, shift: Int) -> String {
+    let plainTextChars = Array(plainText.uppercased())
+    var encryptedChars: [Character] = []
+    
+    for plainChar in plainTextChars {
+        let encryptedChar = shiftChar(char: plainChar, shift: shift)
+        encryptedChars.append(encryptedChar)
+    }
+    
+    return String(encryptedChars)
+}
+
+func caesarDecrypt(cipherText: String, shift: Int) -> String {
+    let cipherTextChars = Array(cipherText.uppercased())
+    var decryptedChars: [Character] = []
+    
+    for cipherChar in cipherTextChars {
+        let decryptedChar = shiftChar(char: cipherChar, shift: -shift)
+        decryptedChars.append(decryptedChar)
+    }
+    
+    return String(decryptedChars)
+}
+
+func shiftChar(char: Character, shift: Int) -> Character {
+    let aVal = Int(Character("A").asciiValue!)
+    let charVal = Int(char.asciiValue!)
+    let shiftedVal = (charVal - aVal + shift + 26) % 26
+    return Character(UnicodeScalar(shiftedVal + aVal)!)
+}
+
+let plainText = "ANGELINA"
+let shift = 3
+
+let cipherText = caesarEncrypt(plainText: plainText, shift: shift)
+let decryptedText = caesarDecrypt(cipherText: cipherText, shift: shift)
+
+print("Зашифрован: ", cipherText, " Расшифрован: ", decryptedText)

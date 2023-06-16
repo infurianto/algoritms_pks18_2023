@@ -1,0 +1,34 @@
+import CryptoKit
+import Foundation
+
+func encryptAES(_ plaintext: String, withKey key: SymmetricKey) -> Data? {
+    guard let plaintextData = plaintext.data(using: .utf8) else {
+        return nil
+    }
+    
+    let sealedBox = try? AES.GCM.seal(plaintextData, using: key)
+    return sealedBox?.combined
+}
+
+func decryptAES(_ ciphertext: Data, withKey key: SymmetricKey) -> String? {
+    guard let sealedBox = try? AES.GCM.SealedBox(combined: ciphertext) else {
+        return nil
+    }
+    
+    let plaintextData = try? AES.GCM.open(sealedBox, using: key)
+    return String(data: plaintextData ?? Data(), encoding: .utf8)
+}
+
+// Генерируем случайный ключ
+let key = SymmetricKey(size: .bits256)
+
+// Шифруем сообщение
+let plaintext = "Angelina"
+let ciphertext = encryptAES(plaintext, withKey: key)!
+
+// Расшифровываем сообщение
+let decryptedPlaintext = decryptAES(ciphertext, withKey: key)!
+
+print("Plaintext: \(plaintext)")
+print("Ciphertext: \(ciphertext.base64EncodedString())")
+print("Decrypted plaintext: \(decryptedPlaintext)")

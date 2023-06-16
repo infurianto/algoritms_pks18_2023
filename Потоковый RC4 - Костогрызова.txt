@@ -1,0 +1,42 @@
+func rc4(key: [UInt8], message: [UInt8]) -> [UInt8] {
+    var s = [UInt8](0...255)
+    var j: UInt8 = 0
+    
+    // Инициализация массива S
+    for i in 0..<256 {
+        j = j &+ s[i] &+ key[i % key.count]
+        s.swapAt(i, Int(j))
+    }
+    
+    // Генерация ключевого потока
+    var i: UInt8 = 0
+    j = 0
+    var keyStream = [UInt8]()
+    for _ in 0..<message.count {
+        i = i &+ 1
+        j = j &+ s[Int(i)]
+        s.swapAt(Int(i), Int(j))
+        let t = s[Int(i)] &+ s[Int(j)]
+        let k = s[Int(t)]
+        keyStream.append(k)
+    }
+    
+    // Шифрование/дешифрование данных
+    var result = [UInt8]()
+    for i in 0..<message.count {
+        let encryptedByte = message[i] ^ keyStream[i]
+        result.append(encryptedByte)
+    }
+    
+    return result
+}
+
+let key = [UInt8]("mysecretkey12345".utf8)
+let message = [UInt8]("Angelina has a gun".utf8)
+
+let encryptedMessage = rc4(key: key, message: message)
+let decryptedMessage = rc4(key: key, message: encryptedMessage)
+
+print("Original message: \(String(decoding: message, as: UTF8.self))")
+print("Encrypted message: \(encryptedMessage)")
+print("Decrypted message: \(String(decoding: decryptedMessage, as: UTF8.self))")

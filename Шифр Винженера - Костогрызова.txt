@@ -1,0 +1,57 @@
+// Шифрует
+func vigenereDecrypt(cipherText: String, key: String) -> String {
+    let cipherTextChars = Array(cipherText.uppercased())
+    let keyChars = Array(key.uppercased())
+    var decryptedChars: [Character] = []
+    
+    for (i, cipherChar) in cipherTextChars.enumerated() {
+        let keyIndex = i % keyChars.count
+        let keyChar = keyChars[keyIndex]
+        let decryptedChar = shiftChar(char: cipherChar, shift: -charToInt(char: keyChar))
+        decryptedChars.append(decryptedChar)
+    }
+    
+    return String(decryptedChars)
+}
+
+// Расшифрует
+func vigenereEncrypt(plainText: String, key: String) -> String {
+    let plainTextChars = Array(plainText.uppercased())
+    let keyChars = Array(key.uppercased())
+    var encryptedChars: [Character] = []
+    
+    for (i, plainChar) in plainTextChars.enumerated() {
+        let keyIndex = i % keyChars.count
+        let keyChar = keyChars[keyIndex]
+        let encryptedChar = shiftChar(char: plainChar, shift: charToInt(char: keyChar))
+        encryptedChars.append(encryptedChar)
+    }
+    
+    return String(encryptedChars)
+}
+
+func shiftChar(char: Character, shift: Int) -> Character {
+    let charVal = charToInt(char: char)
+    let shiftedVal = (charVal + shift) % 26
+    return intToChar(int: shiftedVal)
+}
+
+func charToInt(char: Character) -> Int {
+    let aVal = Int(Character("A").asciiValue!)
+    let charVal = Int(char.asciiValue!)
+    return charVal - aVal
+}
+
+func intToChar(int: Int) -> Character {
+    let aVal = Int(Character("A").asciiValue!)
+    let charVal = aVal + int
+    return Character(UnicodeScalar(charVal)!)
+}
+
+let plainText = "ANGELINA"
+let key = "KEY"
+
+let decrypted = vigenereDecrypt(cipherText: plainText, key: key)
+let encrypted = vigenereEncrypt(plainText: decrypted, key: key)
+
+print("Зашифрован: ", decrypted, " Расшифрован: ", encrypted)

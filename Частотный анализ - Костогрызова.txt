@@ -1,0 +1,41 @@
+let alphabet = "abcdefghijklmnopqrstuvwxyz"
+let frequency = [0.082, 0.015, 0.028, 0.043, 0.127, 0.022, 0.020, 0.061, 0.070, 0.002, 0.008, 0.040, 0.024, 0.067, 0.075, 0.019, 0.001, 0.060, 0.063, 0.091, 0.028, 0.010, 0.023, 0.001, 0.020, 0.001]
+
+func analyzeFrequency(_ ciphertext: String) -> [Double] {
+    var frequencyTable = Array(repeating: 0.0, count: 26)
+    let total = Double(ciphertext.count)
+
+    for character in ciphertext.lowercased() {
+        if let index = alphabet.firstIndex(of: character) {
+            frequencyTable[index.encodedOffset] += 1.0
+        }
+    }
+
+    for i in 0..<26 {
+        frequencyTable[i] /= total
+    }
+
+    return frequencyTable
+}
+
+func decryptWithFrequencyAnalysis(_ ciphertext: String) -> String {
+    let ciphertextFrequency = analyzeFrequency(ciphertext)
+    let maxIndex = ciphertextFrequency.firstIndex(of: ciphertextFrequency.max()!)!
+    let shift = (maxIndex - 4 + 26) % 26
+    let shiftedAlphabet = String(alphabet.dropFirst(shift) + alphabet.prefix(shift))
+    var plaintext = ""
+
+    for character in ciphertext {
+        if let index = shiftedAlphabet.firstIndex(of: character) {
+            plaintext.append(alphabet[index])
+        } else {
+            plaintext.append(character)
+        }
+    }
+
+    return plaintext
+}
+
+let ciphertext1 = "The quick brown fox jumps over the lazy dog"
+let plaintext1 = decryptWithFrequencyAnalysis(ciphertext1)
+

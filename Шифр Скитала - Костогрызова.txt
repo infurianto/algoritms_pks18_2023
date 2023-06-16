@@ -1,0 +1,58 @@
+func scytaleEncrypt(plainText: String, key: Int) -> String {
+    let plainTextChars = Array(plainText)
+    let columns = (plainTextChars.count + key - 1) / key
+    var grid: [[Character]] = Array(repeating: Array(repeating: " ", count: columns), count: key)
+    var col = 0
+    var row = 0
+    
+    for plainChar in plainTextChars {
+        grid[row][col] = plainChar
+        row += 1
+        if row == key {
+            row = 0
+            col += 1
+        }
+    }
+    
+    var encryptedChars: [Character] = []
+    for row in grid {
+        encryptedChars += row
+    }
+    
+    return String(encryptedChars)
+}
+
+func scytaleDecrypt(cipherText: String, key: Int) -> String {
+    let cipherTextChars = Array(cipherText)
+    let columns = (cipherTextChars.count + key - 1) / key
+    let rows = key
+    var grid: [[Character]] = Array(repeating: Array(repeating: " ", count: columns), count: rows)
+    var col = 0
+    var row = 0
+    
+    for cipherChar in cipherTextChars {
+        grid[row][col] = cipherChar
+        row += 1
+        if row == key {
+            row = 0
+            col += 1
+        }
+    }
+    
+    var decryptedChars: [Character] = []
+    for col in 0..<columns {
+        for row in 0..<rows {
+            decryptedChars.append(grid[row][col])
+        }
+    }
+    
+    return String(decryptedChars)
+}
+
+let plainText = "ANGELINA LOVES SWIFT"
+let key = 4
+
+let cipherText = scytaleEncrypt(plainText: plainText, key: key)
+let decryptedText = scytaleDecrypt(cipherText: cipherText, key: key)
+
+print("Зашифрован: ", cipherText, " Расшифрован: ", decryptedText)

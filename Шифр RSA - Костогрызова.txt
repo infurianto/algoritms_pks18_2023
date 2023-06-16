@@ -1,0 +1,61 @@
+import Foundation
+import Security
+
+func generateKeyPair() -> (publicKey: SecKey, privateKey: SecKey)? {
+    let parameters: [String: Any] = [
+        kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
+        kSecAttrKeySizeInBits as String: 2048
+    ]
+    
+    var error: Unmanaged<CFError>?
+    guard let privateKey = SecKeyCreateRandomKey(parameters as CFDictionary, &error),
+          let publicKey = SecKeyCopyPublicKey(privateKey) else {
+        print("Error generating key pair: \(error.debugDescription)")
+        return nil
+    }
+    
+    return (publicKey, privateKey)
+}
+
+func rsaEncrypt(_ plaintext: String, withPublicKey publicKey: SecKey) -> Data? {
+    guard let plaintextData = plaintext.data(using: .utf8) else {
+        return nil
+    }
+    
+    var error: Unmanaged<CFError>?
+    guard let encryptedData = SecKeyCreateEncryptedData(publicKey, .rsaEncryptionPKCS1, plaintextData as CFData, &error) else {
+        print("Error encrypting data: \(error.debugDescription)")
+        return nil
+    }
+    
+    return encryptedData as Data
+}
+
+func rsaDecrypt(_ encryptedData: Data, withPrivateKey privateKey: SecKey) -> String? {
+    var error: Unmanaged<CFError>?
+    guard let plaintextData = SecKeyCreateDecryptedData(privateKey, .rsaEncryptionPKCS1, encryptedData as CFData, &error) else {
+        print("Error decrypting data: \(error.debugDescription)")
+        return nil
+    }
+    
+    guard let plaintext = String(data: plaintextData as Data, encoding: .utf8) else {
+        print("Error decoding plaintext")
+        return nil
+    }
+    
+    return plaintext
+}
+
+// Генерируем пару ключей
+let keyPair = generateKeyPair()!
+
+// Шифруем сообщение с помощью открытого ключа
+let plaintext = "ANGELINA"
+let encryptedData = rsaEncrypt(plaintext, withPublicKey: keyPair.publicKey)!
+
+// Расшифровываем сообщение с помощью закрытого ключа
+let decryptedPlaintext = rsaDecrypt(encryptedData, withPrivateKey: keyPair.privateKey)
+
+print("Plaintext: \(plaintext)")
+print("Encrypted data: \(encryptedData.base64EncodedString())")
+print("Decrypted plaintext: \(decryptedPlaintext)")

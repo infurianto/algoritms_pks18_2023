@@ -1,0 +1,32 @@
+let plaintext = "living easy loving free"
+let alphabet = "abcdefghijklmnopqrstuvwxyz"
+let cipher = "qwertyuiopasdfghjklzxcvbnm"
+
+var ciphertext = ""
+
+// Зашифровываем
+for character in plaintext {
+    if let index = alphabet.firstIndex(of: character) {
+        let newIndex = alphabet.distance(from: alphabet.startIndex, to: index)
+        ciphertext += String(cipher[cipher.index(cipher.startIndex, offsetBy: newIndex)])
+    } else {
+        ciphertext += String(character)
+    }
+}
+
+print("Plaintext: \(plaintext)")
+print("Ciphertext: \(ciphertext)")
+
+var decryptedPlaintext = ""
+
+// Расшифровываем 
+for character in ciphertext {
+    if let index = cipher.firstIndex(of: character) {
+        let newIndex = cipher.distance(from: cipher.startIndex, to: index)
+        decryptedPlaintext += String(alphabet[alphabet.index(alphabet.startIndex, offsetBy: newIndex)])
+    } else {
+        decryptedPlaintext += String(character)
+    }
+}
+
+print("Decrypted plaintext: \(decryptedPlaintext)")

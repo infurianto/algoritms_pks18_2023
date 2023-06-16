@@ -1,0 +1,31 @@
+func xorEncrypt(_ input: String, withKey key: UInt8) -> [UInt8] {
+    let inputBytes = Array(input.utf8)
+    var outputBytes = [UInt8]()
+    
+    for byte in inputBytes {
+        let encryptedByte = byte ^ key
+        outputBytes.append(encryptedByte)
+    }
+    
+    return outputBytes
+}
+
+func xorDecrypt(_ input: [UInt8], withKey key: UInt8) -> String {
+    var decryptedBytes = [UInt8]()
+    var s = [Any]()
+    for byte in input {
+        let decryptedByte = byte ^ key
+        decryptedBytes.append(decryptedByte)
+        s.append(UInt8( decryptedByte))
+        
+    }
+
+    return String(decoding: decryptedBytes, as: UTF8.self)
+}
+let plainText = "ANGELINA LOVES SWIFT"
+let key: UInt8 = 0x3B // 0011 1011 in binary
+
+let encryptedBytes = xorEncrypt(plainText, withKey: key)
+let decryptedText = xorDecrypt(encryptedBytes, withKey: key)
+
+print("Зашифрован: ", encryptedBytes, " Расшифрован: ", decryptedText)
